@@ -6,6 +6,7 @@ body {
 }
 
 p { font-size: 12px; line-height: 20px; }
+a { font-size: 12px; line-height: 20px; color: inherit; }
 a img { border: 0; }
 
 #wrapper { 
@@ -48,6 +49,7 @@ a img { border: 0; }
   top: 347px; 
   text-align: left; 
   width: 317px; 
+  overflow: auto;
 }
 
 #itemDetail { left: 0; position: absolute; top: 0px; }
