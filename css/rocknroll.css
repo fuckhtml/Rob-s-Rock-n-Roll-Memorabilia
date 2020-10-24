@@ -8,7 +8,7 @@ body {
 p { font-size: 12px; line-height: 20px; }
 a { font-size: 12px; line-height: 20px; color: inherit; }
 a img { border: 0; }
-
+ul{ font-size: 12px; line-height: 20px; }
 #wrapper { 
   background: #750505 url('../images/bgWrapper.png') 8px 0 no-repeat;
   border: solid #300; 

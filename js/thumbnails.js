@@ -46,7 +46,7 @@ const initPage = () => {
 
   // for getDetailsXML.php: comma seperated values
   const renderDetailsXML = (xml) => {
-    // collect data
+    // format data
     const data = {
       itemID: xml.querySelector('item').id,
       description: xml.querySelector('description').textContent,
@@ -85,6 +85,66 @@ const initPage = () => {
     console.log(xml);
   }
 
+  const renderDetailsJSON = (json) => {
+    for (let prop in json) {
+      console.log(prop);
+    }
+
+    const description = document.createElement('p');
+    description.innerHTML = `<p>${json.description}</p>`;
+
+    const price = document.createElement('p');    
+    price.innerHTML = `<p><b>Price: ${json.price}<b></p>`;
+    
+    const links = document.createElement('ul');
+    json.urls.map(function(link) {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = link;
+      a.textContent = link;
+      li.append(a);
+      links.append(li);
+    });
+
+    const detailsPane = document.querySelector('#detailsPane');
+    detailsPane.querySelector('img').src=`images/${json.id}-detail.jpg`;
+    detailsPane.querySelector('#description').innerHTML = '';
+    detailsPane.querySelector('#description').append(description);
+    detailsPane.querySelector('#description').append(price);
+    detailsPane.querySelector('#description').append(links);
+  }
+
+  const renderDetailsDynamicJSON = (json) => {
+    const isArray = function(arr) {
+      return /Array/.test(arr.constructor.toString());
+    };
+
+    const detailsPane = document.querySelector('#detailsPane');
+    detailsPane.querySelector('img').src=`images/${json.id}-detail.jpg`;
+    
+    const description = document.querySelector('#description');
+    description.innerHTML = '';
+    for (let prop in json) {
+      const p = document.createElement('p');
+
+      if (isArray(json[prop])) {
+        p.innerHTML = `<b>${prop}:</b>`;
+        description.append(p);
+
+        const ul = document.createElement('ul');
+        json[prop].map(function(value) {
+          const li = document.createElement('li');
+          li.textContent = value;
+          ul.append(li);
+        })
+        description.append(ul);
+      } else {
+        p.innerHTML = `<b>${prop}:</b> ${json[prop]}`;
+        description.append(p);        
+      }
+    }
+  }
+
   const thumbnailPaneOnClickHandler = (event) => {
     if (event.target.tagName === 'IMG') {
       const itemID = event.target.id;
@@ -94,8 +154,10 @@ const initPage = () => {
         if (request.readyState === 4 && request.status === 200) {
           // renderDetails(itemID, request.responseText);
           // renderDetailsCSV(request.responseText);
-          renderDetailsXML(request.responseXML);
+          // renderDetailsXML(request.responseXML);
           // renderDetailsXMLUpdated(request.responseXML);
+          // renderDetailsJSON(eval(`(${request.responseText})`));
+          renderDetailsDynamicJSON(JSON.parse(request.responseText));
         }
       })
 
@@ -106,10 +168,13 @@ const initPage = () => {
       // request.open('GET', `getDetailsCSV.php?ImageID=${itemID}`);
 
       // getDetailsXML.php | XML tree
-      request.open('GET', `getDetailsXML.php?ImageID=${itemID}`);
+      // request.open('GET', `getDetailsXML.php?ImageID=${itemID}`);
 
       // getDetailsXml-updated.php | XML tree, but better structured
       // request.open('GET', `getDetailsXML-updated.php?ImageID=${itemID}`);
+
+      // getDetailsJSON.php | JSON file
+      request.open('GET', `getDetailsJSON.php?ImageID=${itemID}`);
 
       request.send();
     }
